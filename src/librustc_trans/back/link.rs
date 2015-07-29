@@ -905,6 +905,12 @@ fn link_args(cmd: &mut Linker,
     }
     cmd.output_filename(out_filename);
 
+    // If we're building a dynamic library then some platforms need to make sure
+    // that all symbols are exported correctly from the dynamic library.
+    if dylib {
+        cmd.export_symbols(sess, trans, tmpdir);
+    }
+
     // Stack growth requires statically linking a __morestack function. Note
     // that this is listed *before* all other libraries. Due to the usage of the
     // --as-needed flag below, the standard library may only be useful for its
