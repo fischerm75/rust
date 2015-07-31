@@ -68,6 +68,7 @@ pub struct EncodeParams<'a, 'tcx: 'a> {
     pub cstore: &'a cstore::CStore,
     pub encode_inlined_item: EncodeInlinedItem<'a>,
     pub reachable: &'a NodeSet,
+    pub dylibs_used: Vec<ast::CrateNum>,
 }
 
 pub struct EncodeContext<'a, 'tcx: 'a> {
@@ -80,6 +81,7 @@ pub struct EncodeContext<'a, 'tcx: 'a> {
     pub encode_inlined_item: RefCell<EncodeInlinedItem<'a>>,
     pub type_abbrevs: tyencode::abbrev_map<'tcx>,
     pub reachable: &'a NodeSet,
+    pub dylibs_used: Vec<ast::CrateNum>,
 }
 
 fn encode_name(rbml_w: &mut Encoder, name: ast::Name) {
@@ -2033,6 +2035,12 @@ fn encode_dylib_dependency_formats(rbml_w: &mut Encoder, ecx: &EncodeContext) {
     }
 }
 
+fn encode_dylib_usage(rbml_w: &mut Encoder, ecx: &EncodeContext) {
+    rbml_w.wr_tagged_str(tag_dylib_usage,
+                         &ecx.dylibs_used.iter().map(|x| x.to_string())
+                             .collect::<Vec<_>>().join(","));
+}
+
 // NB: Increment this as you change the metadata encoding version.
 #[allow(non_upper_case_globals)]
 pub const metadata_encoding_version : &'static [u8] = &[b'r', b'u', b's', b't', 0, 0, 0, 2 ];
@@ -2116,6 +2124,7 @@ fn encode_metadata_inner(wr: &mut Cursor<Vec<u8>>,
         encode_inlined_item,
         link_meta,
         reachable,
+        dylibs_used,
         ..
     } = parms;
     let ecx = EncodeContext {
@@ -2128,6 +2137,7 @@ fn encode_metadata_inner(wr: &mut Cursor<Vec<u8>>,
         encode_inlined_item: RefCell::new(encode_inlined_item),
         type_abbrevs: RefCell::new(FnvHashMap()),
         reachable: reachable,
+        dylibs_used: dylibs_used,
      };
 
     let mut rbml_w = Encoder::new(wr);
@@ -2136,6 +2146,7 @@ fn encode_metadata_inner(wr: &mut Cursor<Vec<u8>>,
     encode_crate_triple(&mut rbml_w, &tcx.sess.opts.target_triple);
     encode_hash(&mut rbml_w, &ecx.link_meta.crate_hash);
     encode_dylib_dependency_formats(&mut rbml_w, &ecx);
+    encode_dylib_usage(&mut rbml_w, &ecx);
 
     let mut i = rbml_w.writer.seek(SeekFrom::Current(0)).unwrap();
     encode_attributes(&mut rbml_w, &krate.attrs);

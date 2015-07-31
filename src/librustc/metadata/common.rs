@@ -162,6 +162,8 @@ pub const tag_crate_triple: usize = 0x105; // top-level only
 
 pub const tag_dylib_dependency_formats: usize = 0x106; // top-level only
 
+pub const tag_dylib_usage: usize = 0x10f; // top-level only
+
 // Language items are a top-level directory (for speed). Hierarchy:
 //
 // tag_lang_items

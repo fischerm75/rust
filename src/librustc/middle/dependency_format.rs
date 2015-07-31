@@ -142,17 +142,29 @@ fn calculate_type(sess: &session::Session,
     // Sweep all crates for found dylibs. Add all dylibs, as well as their
     // dependencies, ensuring there are no conflicts. The only valid case for a
     // dependency to be relied upon twice is for both cases to rely on a dylib.
+    //
+    // Also note that for every upstream dependency we force all of their
+    // transitively used dynamic libraries to be included dynamically. This
+    // basically means that if dep is compiled against an upstream dynamic
+    // library we have to preserve that aspect and continue to link the upstream
+    // library dynamically.
     sess.cstore.iter_crate_data(|cnum, data| {
         let src = sess.cstore.get_used_crate_source(cnum).unwrap();
         if src.dylib.is_some() {
-            debug!("adding dylib: {}", data.name);
+            info!("adding dylib: {}", data.name);
             add_library(sess, cnum, cstore::RequireDynamic, &mut formats);
             let deps = csearch::get_dylib_dependency_formats(&sess.cstore, cnum);
-            for &(depnum, style) in &deps {
-                debug!("adding {:?}: {}", style,
-                       sess.cstore.get_crate_data(depnum).name.clone());
+            for (depnum, style) in deps {
+                info!("adding {:?}: {}", style,
+                      sess.cstore.get_crate_data(depnum).name);
                 add_library(sess, depnum, style, &mut formats);
             }
+        }
+
+        for depnum in csearch::get_dylibs_used(&sess.cstore, cnum) {
+            info!("adding transitive dynamic: {}",
+                  sess.cstore.get_crate_data(depnum).name);
+            add_dylib(sess, depnum, &mut formats);
         }
     });
 
@@ -170,7 +182,7 @@ fn calculate_type(sess: &session::Session,
         let src = sess.cstore.get_used_crate_source(cnum).unwrap();
         if src.dylib.is_none() && !formats.contains_key(&cnum) {
             assert!(src.rlib.is_some());
-            debug!("adding staticlib: {}", data.name);
+            info!("adding staticlib: {}", data.name);
             add_library(sess, cnum, cstore::RequireStatic, &mut formats);
             ret[cnum as usize - 1] = Some(cstore::RequireStatic);
         }
@@ -205,6 +217,18 @@ fn calculate_type(sess: &session::Session,
     return ret;
 }
 
+fn add_dylib(sess: &session::Session,
+             cnum: ast::CrateNum,
+             formats: &mut FnvHashMap<ast::CrateNum, cstore::LinkagePreference>) {
+    add_library(sess, cnum, cstore::RequireDynamic, formats);
+    let deps = csearch::get_dylib_dependency_formats(&sess.cstore, cnum);
+    for (depnum, style) in deps {
+        info!("adding {:?}: {}", style,
+              sess.cstore.get_crate_data(depnum).name);
+        add_library(sess, depnum, style, formats);
+    }
+}
+
 fn add_library(sess: &session::Session,
                cnum: ast::CrateNum,
                link: cstore::LinkagePreference,
@@ -233,9 +257,21 @@ fn add_library(sess: &session::Session,
 
 fn attempt_static(sess: &session::Session) -> Option<DependencyList> {
     let crates = sess.cstore.get_used_crates(cstore::RequireStatic);
-    if crates.iter().by_ref().all(|&(_, ref p)| p.is_some()) {
-        Some(crates.into_iter().map(|_| Some(cstore::RequireStatic)).collect())
-    } else {
-        None
+
+    // First, make sure that we've got rlibs available for all deps
+    if crates.iter().any(|&(_, ref p)| p.is_none()) {
+        return None
     }
+
+    // Next, if any rlib is compiled to require an upstream dylib then we can't
+    // be entirely static
+    let dylibs_required = crates.iter().any(|&(cnum, _)| {
+        csearch::get_dylibs_used(&sess.cstore, cnum).len() > 0
+    });
+    if dylibs_required {
+        return None
+    }
+
+    // After those checks we just link everything statically!
+    Some(crates.into_iter().map(|_| Some(cstore::RequireStatic)).collect())
 }

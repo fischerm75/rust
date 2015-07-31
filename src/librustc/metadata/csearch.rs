@@ -342,6 +342,12 @@ pub fn get_dylib_dependency_formats(cstore: &cstore::CStore,
     decoder::get_dylib_dependency_formats(&*cdata)
 }
 
+pub fn get_dylibs_used(cstore: &cstore::CStore, cnum: ast::CrateNum)
+                       -> Vec<ast::CrateNum> {
+    let cdata = cstore.get_crate_data(cnum);
+    decoder::get_dylibs_used(&*cdata)
+}
+
 pub fn get_missing_lang_items(cstore: &cstore::CStore, cnum: ast::CrateNum)
     -> Vec<lang_items::LangItem>
 {

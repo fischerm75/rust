@@ -1376,6 +1376,16 @@ pub fn get_dylib_dependency_formats(cdata: Cmd)
     return result;
 }
 
+pub fn get_dylibs_used(cdata: Cmd) -> Vec<ast::CrateNum> {
+    let formats = reader::get_doc(rbml::Doc::new(cdata.data()),
+                                  tag_dylib_usage);
+    formats.as_str_slice().split(',')
+           .filter(|x| !x.is_empty())
+           .map(|s| s.parse().unwrap())
+           .map(|d| cdata.cnum_map[&d])
+           .collect()
+}
+
 pub fn get_missing_lang_items(cdata: Cmd)
     -> Vec<lang_items::LangItem>
 {

@@ -237,7 +237,11 @@ pub fn get_extern_const<'a, 'tcx>(ccx: &CrateContext<'a, 'tcx>, did: ast::DefId,
             llvm::set_thread_local(c, true);
         }
     }
-    if ccx.use_dll_storage_attrs() {
+
+    // For MSVC targets if we're linking in this crate via a DLL then we need to
+    // make sure the constant is tagged with dllimport.
+    if ccx.sess().target.target.options.is_like_msvc &&
+       ccx.is_linked_via_dylib(did.krate) {
         llvm::SetDLLStorageClass(c, llvm::DLLImportStorageClass);
     }
     ccx.externs().borrow_mut().insert(name.to_string(), c);
@@ -2511,6 +2515,7 @@ pub fn crate_ctxt_to_encode_parms<'a, 'tcx>(cx: &'a SharedCrateContext<'a, 'tcx>
         cstore: &cx.sess().cstore,
         encode_inlined_item: ie,
         reachable: reachable,
+        dylibs_used: cx.dylibs_used(),
     }
 }
 
