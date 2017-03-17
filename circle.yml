@@ -2,6 +2,18 @@ checkout:
   post:
     - git submodule update --init
 
+dependencies:
+  override:
+    - echo lol
+
 database:
   override:
     - echo nope
+
+compile:
+  override:
+    - echo nope
+
+test:
+  override:
+    - src/ci/docker/run.sh x86_64-gnu-llvm-3.7
