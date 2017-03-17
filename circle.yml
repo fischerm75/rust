@@ -35,7 +35,10 @@ machine:
 
 test:
   override:
-    - stamp src/ci/docker/run.sh x86_64-gnu
+    - set -o pipefile &&
+        stamp src/ci/docker/run.sh x86_64-gnu 2>&1 |
+        tee $CIRCLE_ARTIFACTS/build.log
 
   post:
+    - if [ -d obj/build/dist ]; then cp obj/build/dist/* $CIRCLE_ARTIFACTS; fi
     - mkdir -p ~/docker; docker save rust-ci > ~/docker/image.tar
