@@ -12,9 +12,9 @@ dependencies:
 
   override:
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
-    - curl -O $HOME/bin/sccache https://s3.amazonaws.com/rust-lang-ci/rust-ci-mirror/2017-03-16-sccache-x86_64-unknown-linux-musl &&
+    - curl -o $HOME/bin/sccache https://s3.amazonaws.com/rust-lang-ci/rust-ci-mirror/2017-03-16-sccache-x86_64-unknown-linux-musl &&
       chmod +x $HOME/bin/sccache
-    - curl -O $HOME/bin/stamp https://s3.amazonaws.com/rust-lang-ci/rust-ci-mirror/2017-03-17-stamp-x86_64-unknown-linux-musl &&
+    - curl -o $HOME/bin/stamp https://s3.amazonaws.com/rust-lang-ci/rust-ci-mirror/2017-03-17-stamp-x86_64-unknown-linux-musl &&
       chmod +x $HOME/bin/stamp
 
 database:
