@@ -30,7 +30,7 @@ machine:
 
 test:
   override:
-    - src/ci/docker/run.sh x86_64-gnu-llvm-3.7
+    - src/ci/docker/run.sh x86_64-gnu
 
   post:
     - mkdir -p ~/docker; docker save rust-ci > ~/docker/image.tar
