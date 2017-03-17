@@ -3,8 +3,14 @@ checkout:
     - git submodule update --init
 
 dependencies:
+  cache_directories:
+    - "~/docker"
+  pre:
+    # update locally with:
+    # openssl aes-256-cbc -e -in secret-env-plain -out secret-env-cipher -k $KEY
+    - openssl aes-256-cbc -d -in src/ci/circle-secrets -k $KEY >> ~/.circlerc
   override:
-    - echo lol
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
 
 database:
   override:
@@ -15,9 +21,16 @@ compile:
     - echo nope
 
 machine:
+  environment:
+    SCCACHE_BUCKET: rust-lang-ci-sccache
+    AWS_ACCESS_KEY_ID: AKIAIMX7VLAS3PZAVLUQ
+    # AWS_SECRET_ACCESS_KEY=located in src/ci/circle-secrets
   services:
     - docker
 
 test:
   override:
     - src/ci/docker/run.sh x86_64-gnu-llvm-3.7
+
+  post:
+    - mkdir -p ~/docker; docker save rust-ci > ~/docker/image.tar
