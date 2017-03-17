@@ -1,0 +1,8 @@
+version: 2
+jobs:
+  build:
+    machine:
+      enabled: true
+    working_directory: ~/rust
+    steps:
+      - run: sleep 100
