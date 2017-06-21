@@ -41,11 +41,7 @@
 #![feature(discriminant_value)]
 #![feature(sort_unstable)]
 #![feature(trace_macros)]
-
-#![cfg_attr(stage0, unstable(feature = "rustc_private", issue = "27812"))]
-#![cfg_attr(stage0, feature(rustc_private))]
-#![cfg_attr(stage0, feature(staged_api))]
-#![cfg_attr(stage0, feature(loop_break_value))]
+#![feature(test)]
 
 #![recursion_limit="256"]
 
@@ -67,6 +63,11 @@ extern crate syntax_pos;
 #[macro_use] #[no_link] extern crate rustc_bitflags;
 
 extern crate serialize as rustc_serialize; // used by deriving
+
+// Note that librustc doesn't actually depend on these crates, see the note in
+// `Cargo.toml` for this crate about why these are here.
+extern crate flate2;
+extern crate test;
 
 #[macro_use]
 mod macros;

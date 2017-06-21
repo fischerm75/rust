@@ -28,11 +28,6 @@
 #![feature(rustc_diagnostic_macros)]
 #![feature(set_stdio)]
 
-#![cfg_attr(stage0, unstable(feature = "rustc_private", issue = "27812"))]
-#![cfg_attr(stage0, feature(rustc_private))]
-#![cfg_attr(stage0, feature(staged_api))]
-#![cfg_attr(stage0, feature(loop_break_value))]
-
 extern crate arena;
 extern crate getopts;
 extern crate graphviz;
@@ -730,10 +725,10 @@ fn usage(verbose: bool, include_unstable_options: bool) {
     } else {
         config::rustc_short_optgroups()
     };
-    let groups: Vec<_> = groups.into_iter()
-                               .filter(|x| include_unstable_options || x.is_stable())
-                               .map(|x| x.opt_group)
-                               .collect();
+    let mut options = getopts::Options::new();
+    for option in groups.iter().filter(|x| include_unstable_options || x.is_stable()) {
+        (option.apply)(&mut options);
+    }
     let message = format!("Usage: rustc [OPTIONS] INPUT");
     let extra_help = if verbose {
         ""
@@ -746,7 +741,7 @@ fn usage(verbose: bool, include_unstable_options: bool) {
               Print 'lint' options and default settings
     -Z help             Print internal \
               options for debugging rustc{}\n",
-             getopts::usage(&message, &groups),
+             options.usage(&message),
              extra_help);
 }
 
@@ -960,11 +955,11 @@ pub fn handle_options(args: &[String]) -> Option<getopts::Matches> {
 
     // Parse with *all* options defined in the compiler, we don't worry about
     // option stability here we just want to parse as much as possible.
-    let all_groups: Vec<getopts::OptGroup> = config::rustc_optgroups()
-                                                 .into_iter()
-                                                 .map(|x| x.opt_group)
-                                                 .collect();
-    let matches = match getopts::getopts(&args, &all_groups) {
+    let mut options = getopts::Options::new();
+    for option in config::rustc_optgroups() {
+        (option.apply)(&mut options);
+    }
+    let matches = match options.parse(args) {
         Ok(m) => m,
         Err(f) => early_error(ErrorOutputType::default(), &f.to_string()),
     };

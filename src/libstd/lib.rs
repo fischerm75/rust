@@ -245,6 +245,7 @@
 // std is implemented with unstable features, many of which are internal
 // compiler details that will never be stable
 #![feature(alloc)]
+#![feature(allocator_api)]
 #![feature(allow_internal_unstable)]
 #![feature(asm)]
 #![feature(associated_consts)]
@@ -253,6 +254,7 @@
 #![feature(cfg_target_thread_local)]
 #![feature(cfg_target_vendor)]
 #![feature(char_escape_debug)]
+#![feature(char_error_internals)]
 #![feature(char_internals)]
 #![feature(collections_range)]
 #![feature(compiler_builtins_lib)]
