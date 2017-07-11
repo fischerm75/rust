@@ -2306,11 +2306,6 @@ impl<'a> State<'a> {
                     _ => ()
                 }
             }
-            ast::ExprKind::ImplArg => {
-                word(&mut self.s, "impl")?;
-                space(&mut self.s)?;
-                word(&mut self.s, "arg")?;
-            }
             ast::ExprKind::Try(ref e) => {
                 self.print_expr(e)?;
                 word(&mut self.s, "?")?

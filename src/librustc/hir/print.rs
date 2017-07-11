@@ -1466,11 +1466,6 @@ impl<'a> State<'a> {
                 word(&mut self.s, "yield ")?;
                 self.print_expr(&expr)?;
             }
-            hir::ExprImplArg(_) => {
-                word(&mut self.s, "gen")?;
-                space(&mut self.s)?;
-                word(&mut self.s, "arg")?;
-            }
         }
         self.ann.post(self, NodeExpr(expr))?;
         self.end()
