@@ -63,6 +63,12 @@ fn main() {
         args.remove(n);
     }
 
+    if env::var("HACK").is_ok() {
+        if let Some(n) = args.iter().position(|n| n.to_str().unwrap().starts_with("opt-level")) {
+            args[n] = String::from("opt-level=0").into();
+        }
+    }
+
     // Detect whether or not we're a build script depending on whether --target
     // is passed (a bit janky...)
     let target = args.windows(2)
