@@ -176,12 +176,6 @@ dependencies = [
 [[package]]
 name = "cargo"
 version = "0.22.0"
-source = "git+https://github.com/rust-lang/cargo#bcf3997b1fa177afc5b6c632a6fbbf6cc75df427"
-replace = "cargo 0.22.0"
-
-[[package]]
-name = "cargo"
-version = "0.22.0"
 dependencies = [
  "advapi32-sys 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "atty 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1170,7 +1164,7 @@ version = "0.1.0"
 name = "rls"
 version = "0.1.0"
 dependencies = [
- "cargo 0.22.0 (git+https://github.com/rust-lang/cargo)",
+ "cargo 0.22.0",
  "env_logger 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc-core 7.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "languageserver-types 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2198,7 +2192,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum bitflags 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)" = "1370e9fc2a6ae53aea8b7a5110edbd08836ed87c88736dfabccade1c2b44bff4"
 "checksum bitflags 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)" = "4efd02e230a02e18f92fc2735f44597385ed02ad8f831e7c1c1156ee5e1ab3a5"
 "checksum bufstream 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)" = "f2f382711e76b9de6c744cc00d0497baba02fb00a787f088c879f01d09468e32"
-"checksum cargo 0.22.0 (git+https://github.com/rust-lang/cargo)" = "<none>"
 "checksum cfg-if 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "d4c819a1287eb618df47cc647173c5c4c66ba19d888a6e50d605672aed3140de"
 "checksum clap 2.26.0 (registry+https://github.com/rust-lang/crates.io-index)" = "2267a8fdd4dce6956ba6649e130f62fb279026e5e84b92aa939ac8f85ce3f9f0"
 "checksum cmake 0.1.24 (registry+https://github.com/rust-lang/crates.io-index)" = "b8ebbb35d3dc9cd09497168f33de1acb79b265d350ab0ac34133b98f8509af1f"
