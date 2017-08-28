@@ -1130,6 +1130,8 @@ define_maps! { <'tcx>
     [] extern_crate: ExternCrate(DefId) -> Rc<Option<ExternCrate>>,
 
     [] lint_levels: lint_levels_node(CrateNum) -> Rc<lint::LintLevelMap>,
+
+    [] impl_defaultness: ImplDefaultness(DefId) -> hir::Defaultness,
 }
 
 fn type_param_predicates<'tcx>((item_id, param_id): (DefId, DefId)) -> DepConstructor<'tcx> {
