@@ -520,13 +520,16 @@ define_dep_nodes!( <'tcx>
     [] IsMirAvailable(DefId),
     [] ItemAttrs(DefId),
     [] FnArgNames(DefId),
-    [] DylibDepFormats(DefId),
-    [] IsAllocator(DefId),
-    [] IsPanicRuntime(DefId),
-    [] IsCompilerBuiltins(DefId),
-    [] HasGlobalAllocator(DefId),
+    [] DylibDepFormats(CrateNum),
+    [] IsPanicRuntime(CrateNum),
+    [] IsCompilerBuiltins(CrateNum),
+    [] HasGlobalAllocator(CrateNum),
     [] ExternCrate(DefId),
     [] LintLevels,
+    [] IsSanitizerRuntime(CrateNum),
+    [] IsProfilerRuntime(CrateNum),
+    [] GetPanicStrategy(CrateNum),
+    [] IsNoBuiltins(CrateNum),
 );
 
 trait DepNodeParams<'a, 'gcx: 'tcx + 'a, 'tcx: 'a> : fmt::Debug {
