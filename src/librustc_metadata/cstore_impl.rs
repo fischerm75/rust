@@ -37,7 +37,6 @@ use syntax::ext::base::SyntaxExtension;
 use syntax::parse::filemap_to_stream;
 use syntax::symbol::Symbol;
 use syntax_pos::{Span, NO_EXPANSION};
-use rustc::hir::svh::Svh;
 use rustc::hir;
 
 macro_rules! provide {
@@ -174,7 +173,6 @@ provide! { <'tcx> tcx, def_id, cdata,
     }
     crate_disambiguator => { cdata.disambiguator() }
     crate_hash => { cdata.hash() }
-    original_crate_name => { cdata.name() }
 }
 
 pub fn provide_local<'tcx>(providers: &mut Providers<'tcx>) {
@@ -281,11 +279,6 @@ impl CrateStore for cstore::CStore {
     fn original_crate_name(&self, cnum: CrateNum) -> Symbol
     {
         self.get_crate_data(cnum).name()
-    }
-
-    fn crate_hash(&self, cnum: CrateNum) -> Svh
-    {
-        self.get_crate_hash(cnum)
     }
 
     /// Returns the `DefKey` for a given `DefId`. This indicates the

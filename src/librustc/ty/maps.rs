@@ -12,6 +12,7 @@ use dep_graph::{DepConstructor, DepNode, DepNodeIndex};
 use errors::{Diagnostic, DiagnosticBuilder};
 use hir::def_id::{CrateNum, DefId, LOCAL_CRATE};
 use hir::def::Def;
+use hir::svh::Svh;
 use hir;
 use lint;
 use middle::const_val;
@@ -586,6 +587,12 @@ impl<'tcx> QueryDescription for queries::derive_registrar_fn<'tcx> {
 impl<'tcx> QueryDescription for queries::crate_disambiguator<'tcx> {
     fn describe(_tcx: TyCtxt, _: CrateNum) -> String {
         format!("looking up the disambiguator a crate")
+    }
+}
+
+impl<'tcx> QueryDescription for queries::crate_hash<'tcx> {
+    fn describe(_tcx: TyCtxt, _: CrateNum) -> String {
+        format!("looking up the hash a crate")
     }
 }
 
@@ -1167,6 +1174,7 @@ define_maps! { <'tcx>
     [] plugin_registrar_fn: PluginRegistrarFn(CrateNum) -> Option<DefId>,
     [] derive_registrar_fn: DeriveRegistrarFn(CrateNum) -> Option<DefId>,
     [] crate_disambiguator: CrateDisambiguator(CrateNum) -> Symbol,
+    [] crate_hash: CrateHash(CrateNum) -> Svh,
 }
 
 fn type_param_predicates<'tcx>((item_id, param_id): (DefId, DefId)) -> DepConstructor<'tcx> {
