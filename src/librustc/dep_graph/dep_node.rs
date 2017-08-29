@@ -535,6 +535,7 @@ define_dep_nodes!( <'tcx>
     [] NativeLibraries(CrateNum),
     [] PluginRegistrarFn(CrateNum),
     [] DeriveRegistrarFn(CrateNum),
+    [] CrateDisambiguator(CrateNum),
 );
 
 trait DepNodeParams<'a, 'gcx: 'tcx + 'a, 'tcx: 'a> : fmt::Debug {

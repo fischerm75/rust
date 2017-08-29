@@ -583,6 +583,12 @@ impl<'tcx> QueryDescription for queries::derive_registrar_fn<'tcx> {
     }
 }
 
+impl<'tcx> QueryDescription for queries::crate_disambiguator<'tcx> {
+    fn describe(_tcx: TyCtxt, _: CrateNum) -> String {
+        format!("looking up the disambiguator a crate")
+    }
+}
+
 // If enabled, send a message to the profile-queries thread
 macro_rules! profq_msg {
     ($tcx:expr, $msg:expr) => {
@@ -1160,6 +1166,7 @@ define_maps! { <'tcx>
     [] native_libraries: NativeLibraries(CrateNum) -> Rc<Vec<NativeLibrary>>,
     [] plugin_registrar_fn: PluginRegistrarFn(CrateNum) -> Option<DefId>,
     [] derive_registrar_fn: DeriveRegistrarFn(CrateNum) -> Option<DefId>,
+    [] crate_disambiguator: CrateDisambiguator(CrateNum) -> Symbol,
 }
 
 fn type_param_predicates<'tcx>((item_id, param_id): (DefId, DefId)) -> DepConstructor<'tcx> {
