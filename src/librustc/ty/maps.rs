@@ -559,6 +559,12 @@ impl<'tcx> QueryDescription for queries::is_sanitizer_runtime<'tcx> {
     }
 }
 
+impl<'tcx> QueryDescription for queries::exported_symbols<'tcx> {
+    fn describe(_tcx: TyCtxt, _: CrateNum) -> String {
+        format!("looking up the exported symbols of a crate")
+    }
+}
+
 // If enabled, send a message to the profile-queries thread
 macro_rules! profq_msg {
     ($tcx:expr, $msg:expr) => {
@@ -1132,6 +1138,7 @@ define_maps! { <'tcx>
     [] lint_levels: lint_levels_node(CrateNum) -> Rc<lint::LintLevelMap>,
 
     [] impl_defaultness: ImplDefaultness(DefId) -> hir::Defaultness,
+    [] exported_symbols: ExportedSymbols(CrateNum) -> Rc<Vec<DefId>>,
 }
 
 fn type_param_predicates<'tcx>((item_id, param_id): (DefId, DefId)) -> DepConstructor<'tcx> {
