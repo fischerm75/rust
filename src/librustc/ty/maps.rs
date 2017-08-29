@@ -596,6 +596,12 @@ impl<'tcx> QueryDescription for queries::crate_hash<'tcx> {
     }
 }
 
+impl<'tcx> QueryDescription for queries::original_crate_name<'tcx> {
+    fn describe(_tcx: TyCtxt, _: CrateNum) -> String {
+        format!("looking up the original name a crate")
+    }
+}
+
 // If enabled, send a message to the profile-queries thread
 macro_rules! profq_msg {
     ($tcx:expr, $msg:expr) => {
@@ -1175,6 +1181,7 @@ define_maps! { <'tcx>
     [] derive_registrar_fn: DeriveRegistrarFn(CrateNum) -> Option<DefId>,
     [] crate_disambiguator: CrateDisambiguator(CrateNum) -> Symbol,
     [] crate_hash: CrateHash(CrateNum) -> Svh,
+    [] original_crate_name: OriginalCrateName(CrateNum) -> Symbol,
 }
 
 fn type_param_predicates<'tcx>((item_id, param_id): (DefId, DefId)) -> DepConstructor<'tcx> {
